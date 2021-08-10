@@ -1,0 +1,57 @@
+public with sharing class Spoonacular {
+
+    private static final String RECEIPE_API = 'https://api.spoonacular.com';
+    private static final String API_KEY = '0634a895ae6041b2afa38185b0961f6f';
+
+    @AuraEnabled
+    public static String RandomRecipe(){
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint(RECEIPE_API+'/recipes/random?apiKey='+API_KEY);
+        request.setMethod('GET');
+        
+        HttpResponse response = http.send(request);
+        // If the request is successful, parse the JSON response.
+        if (response.getStatusCode() == 200) {
+            system.debug('====>>'+ response.getBody());
+            return response.getBody();
+        }
+        return '';
+    }
+
+
+
+    @AuraEnabled
+    public static String getByIngredients(String ingredients){
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint(RECEIPE_API+'/recipes/findByIngredients?ingredients='+ingredients+'&number=10&apiKey='+API_KEY);
+        request.setMethod('GET');
+        system.debug('--->'+ingredients);
+        HttpResponse response = http.send(request);
+        // If the request is successful, parse the JSON response.
+        if (response.getStatusCode() == 200) {
+            system.debug('-hfgf-->'+response.getBody());
+            return response.getBody();
+        }
+        return '';
+    }
+    
+    @AuraEnabled 
+    public static String getSummary(Integer ReciId){
+         Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint(RECEIPE_API+'/recipes/'+ReciId+'/summary?apiKey='+API_KEY);
+        request.setMethod('GET');
+       system.debug('-ReciId-->'+ReciId);
+        HttpResponse response = http.send(request);
+        // If the request is successful, parse the JSON response.
+        if (response.getStatusCode() == 200) {
+            system.debug('-summary-->'+response.getBody());
+            return response.getBody();
+        }
+        return '';
+        
+    }
+    
+}

@@ -1,0 +1,73 @@
+({
+    getRandomRecipe : function(component, event, helper) {
+        component.set("v.flag",false); 
+        let state, action,
+            opts = [],
+            unformatobj;
+        action = component.get('c.RandomRecipe');
+        action.setCallback(this, function(response) {
+            state = response.getState();
+            if (state === "SUCCESS") {
+                var res=  JSON.parse(response.getReturnValue()).recipes;
+                component.set("v.Recipes",res); 
+            }  
+            
+        });
+        $A.enqueueAction(action);
+    },
+    
+    getRecipeByIngredients : function(component, event, helper) {
+        component.set("v.flag",true); 
+        let ress=[];
+        let  idList=[];
+        var searchTxt = component.get('v.searchReci');
+        var act = component.get('c.getByIngredients');
+        act.setParams({ 'ingredients' : searchTxt });
+        act.setCallback(this, function(response) {
+            var  stat = response.getState();
+            if (stat === "SUCCESS") {
+                ress=  JSON.parse(response.getReturnValue());
+                idList=  JSON.parse(response.getReturnValue()).id;
+                component.set("v.Recipes",ress); 
+                
+            }
+        },'SUCCESS');  
+        
+        $A.enqueueAction(act,false) ; 
+    },
+    
+    
+    sendId: function(component, event, helper) {
+        let resp, resId=[];
+        var su = component.get('v.summaryId');
+        var id_str = event.currentTarget.dataset.value;
+        var recordId= parseInt(id_str);
+        component.set('v.summaryId1', recordId);
+        var act1= component.get('c.getSummary');
+        act1.setParams({'ReciId' : id_str});
+        act1.setCallback(this, function(response){
+            //console.log('summary working 3-->');
+            var st = response.getState(); 
+            if(st=="SUCCESS"){
+                resp= JSON.parse(response.getReturnValue()).summary;
+                resId= JSON.parse(response.getReturnValue()).id;
+                component.set('v.summaryId', resId);
+                component.set('v.summary', resp);
+                helper.openModel(component, event, helper);
+            }
+        },'SUCCESS');  
+        
+        $A.enqueueAction(act1,false) ; 
+    },
+    
+    closeModel: function(component, event, helper) {
+        // Set isModalOpen attribute to false  
+        component.set("v.isModalOpen", false);
+    },
+    
+    submitDetails: function(component, event, helper) {
+        // Set isModalOpen attribute to false
+        //Add your code to call apex method or do some processing
+        component.set("v.isModalOpen", false);
+    }
+})
