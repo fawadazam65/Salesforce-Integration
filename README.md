@@ -1,2 +1,4 @@
 # Salesforce-Integration
-Salesforce Integration with spoonacular.com website 
+Go to website spoonacular.com  
+make your profile  and  get key 
+Put key in  aplex class.
